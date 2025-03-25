@@ -37,14 +37,12 @@ const Chat = () => {
     }
   }, [selectedUser?._id, authUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
-  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // Render loading state or error state
   if (isInitializing || isCheckingAuth) {
     return (
       <div className='flex-1 flex flex-col overflow-auto'>
@@ -55,7 +53,6 @@ const Chat = () => {
     );
   }
 
-  // Check if user is authenticated
   if (!authUser) {
     return (
       <div className='flex-1 flex flex-col overflow-auto'>
