@@ -12,7 +12,7 @@ import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import { useThemeStore } from "./store/useThemeStore.js";
 
-function App() { 
+function App() {
   const { authUser, checkAuth, isCheckingAuth, connectSocket } = useAuthStore();
   const { theme } = useThemeStore();
 
@@ -21,12 +21,10 @@ function App() {
   }, [checkAuth]);
 
   useEffect(() => {
-    // Set initial theme from storage
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
   useEffect(() => {
-    // Once authUser is available, connect the socket.
     if (authUser?._id) {
       connectSocket();
     }
@@ -39,11 +37,11 @@ function App() {
       </div>
     );
   }
-  
+
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen overflow-hidden flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 overflow-auto">
         <Routes>
           <Route path="/" element={authUser ? <HomePage /> : <LandingPage />} />
           <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />

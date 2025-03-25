@@ -10,7 +10,7 @@ const HomePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="h-screen w-full flex bg-base-200 relative">
+    <div className="h-full w-full flex bg-base-200 overflow-hidden">
       {/* Sidebar - Mobile and Desktop Responsive */}
       <div 
         className={`
@@ -56,8 +56,8 @@ const HomePage = () => {
       </button>
 
       {/* Chat section */}
-      <div className="flex-1 flex items-center justify-center p-4 relative">
-        <div className="bg-base-100 rounded-lg shadow-cl w-full h-[calc(100vh-2rem)] relative">
+      <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="bg-base-100 rounded-lg shadow-cl w-full h-full relative overflow-hidden">
           <div className="flex h-full rounded-lg overflow-hidden">
             {!selectedUser ? <EmptyChat /> : <Chat />}
           </div>
