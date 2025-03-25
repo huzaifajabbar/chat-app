@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import MessagesSkeleton from './MessagesSkeleton.jsx';
 import ChatHeader from './ChatHeader.jsx';
 import MessageInput from './MessageInput.jsx';
+import ImageWithSkeleton from './ImageWithSkeleton.jsx';
 
 const Chat = () => {
   const { 
@@ -14,7 +15,7 @@ const Chat = () => {
     subscribeToMessages, 
     unsubscribeFromMessages 
   } = useChatStore();
-  const { authUser, isCheckingAuth, onlineUsers } = useAuthStore();
+  const { authUser, isCheckingAuth } = useAuthStore();
   const messagesContainerRef = useRef(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -25,17 +26,34 @@ const Chat = () => {
   }, [isCheckingAuth]);
 
   useEffect(() => {
+    // Ensure both selectedUser and authUser are present
     if (selectedUser?._id && authUser?._id) {
-      const initialize = async () => {
-        await getMessages(selectedUser._id);
-        subscribeToMessages();
+      // Fetch messages first
+      const initializeChat = async () => {
+        try {
+          // Fetch messages for the selected user
+          await getMessages(selectedUser._id);
+          
+          // Subscribe to real-time messages
+          const handler = subscribeToMessages();
+          
+          // Optional: Log if subscription fails
+          if (!handler) {
+            console.warn('Failed to subscribe to messages');
+          }
+        } catch (error) {
+          console.error('Chat initialization error:', error);
+        }
       };
-
-      initialize();
-
-      return () => unsubscribeFromMessages();
+  
+      initializeChat();
+  
+      // Cleanup subscription when component unmounts or user changes
+      return () => {
+        unsubscribeFromMessages();
+      };
     }
-  }, [selectedUser?._id, authUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [selectedUser?._id, authUser?._id]);
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -144,10 +162,10 @@ const Chat = () => {
                   >
                     {message.text && <p>{message.text}</p>}
                     {message.image && (
-                      <img 
+                      <ImageWithSkeleton 
                         src={message.image} 
                         alt="sent image" 
-                        className="rounded-lg max-w-xs mt-2"
+                        className="max-w-xs md:max-w-md mt-2"
                       />
                     )}
                   </div>

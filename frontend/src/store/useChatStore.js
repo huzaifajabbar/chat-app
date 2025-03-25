@@ -9,6 +9,7 @@ export const useChatStore = create((set, get) => ({
     selectedUser: null,
     isUsersLoading: false,
     isMessagesLoading: false,
+    messageHandler: null,
 
     getUsers: async () => {
         set({ isUsersLoading: true });
@@ -35,7 +36,7 @@ export const useChatStore = create((set, get) => ({
     },
 
     setSelectedUser: (selectedUser) => {
-        // Ensure any previous message subscription is cleaned up
+        // Cleanup previous subscriptions
         get().unsubscribeFromMessages();
         
         set({ 
@@ -44,52 +45,80 @@ export const useChatStore = create((set, get) => ({
         });
     },
 
-    sendMessages: async(data) => {
+    sendMessages: async (data) => {
         const { selectedUser } = get();
         try {
-         const res = await axiosInstance.post(`/messages/${selectedUser._id}`, data);
-         return res.data;
+          const res = await axiosInstance.post(`/messages/${selectedUser._id}`, data);
+          // Update the local messages state immediately
+          set((state) => ({
+            messages: [...state.messages, res.data]
+          }));
+          return res.data;
         } catch (error) {
-         toast.error('Failed to send message');
-         return null;
+          toast.error('Failed to send message');
+          return null;
         }
-     },
+      },
+      
 
-     subscribeToMessages: () => {
-        const socket = useAuthStore.getState().socket;
+    subscribeToMessages: () => {
+        // Dynamically get current socket and auth state
+        const getSocket = () => useAuthStore.getState().socket;
+        const getAuthUser = () => useAuthStore.getState().authUser;
+        
+        const socket = getSocket();
+        const authUser = getAuthUser();
         const { selectedUser } = get();
         
-        if (!socket || !selectedUser) return;
+        // Validate all required components
+        if (!socket) {
+            console.warn('Cannot subscribe to messages: Socket is not available');
+            return null;
+        }
+
+        if (!authUser) {
+            console.warn('Cannot subscribe to messages: No authenticated user');
+            return null;
+        }
+
+        if (!selectedUser) {
+            console.warn('Cannot subscribe to messages: No selected user');
+            return null;
+        }
     
         const messageHandler = (message) => {
-            // Ensure message is for the current conversation
-            const currentUserId = useAuthStore.getState().authUser?._id;
-            if (
-                (message.senderId === selectedUser._id && message.receiverId === currentUserId) ||
-                (message.receiverId === selectedUser._id && message.senderId === currentUserId)
-            ) {
-                // Use a functional update with deduplication
+            // Verify message is for current conversation
+            const isRelevantMessage = 
+                (message.senderId === selectedUser._id && message.receiverId === authUser._id) ||
+                (message.receiverId === selectedUser._id && message.senderId === authUser._id);
+    
+            if (isRelevantMessage) {
                 set((state) => {
-                    // Check if message already exists to prevent duplicates
+                    // Prevent duplicate messages
                     const messageExists = state.messages.some(
                         existingMsg => existingMsg._id === message._id
                     );
     
                     if (!messageExists) {
                         return { 
-                            messages: [...state.messages, message] 
+                            messages: [...state.messages, message].sort((a, b) => 
+                                new Date(a.createdAt) - new Date(b.createdAt)
+                            )
                         };
                     }
                     
-                    return state; // Return current state if message already exists
+                    return state;
                 });
             }
         };
     
+        // Attach the message handler
         socket.on('message', messageHandler);
         
-        // Store the messageHandler for clean removal later
+        // Store the handler for cleanup
         set({ messageHandler });
+    
+        return messageHandler;
     },
 
     unsubscribeFromMessages: () => {

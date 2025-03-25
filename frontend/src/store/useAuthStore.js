@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client"
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000/api" : "/";
+
 
 export const useAuthStore = create((set, get)=> ({
     authUser: null,
@@ -35,6 +35,7 @@ export const useAuthStore = create((set, get)=> ({
             isSigningUp: false
         });
         get().connectSocket();
+        window.location.reload();
         toast.success(res.data.message || "Successfully signed up!");
         return true;
        } catch (error) {
@@ -67,8 +68,8 @@ export const useAuthStore = create((set, get)=> ({
             set({ 
                 authUser: res.data, 
                 isLoggingIn: false 
-            }); 
-            get().connectSocket();
+            });
+            window.location.reload(); // Force refresh
             toast.success("Logged in successfully!");
             return true;
         } catch (error) {
@@ -100,39 +101,67 @@ export const useAuthStore = create((set, get)=> ({
     connectSocket: () => {
         const { authUser, socket } = get();
         
+        // If we're already connected, return
+        if (socket?.connected) return;
+        
         // Disconnect any existing socket before creating a new one
         if (socket) {
-            socket.disconnect();
+          socket.disconnect();
         }
-
-        if (!authUser?._id) return null; 
-    
-        const newSocket = io(BASE_URL, {
-            query: { userId: authUser._id },
-            withCredentials: true,
-            transports: ["websocket", "polling"],
-        });
-    
-        // Handle connection and events
-        newSocket.on("connect", () => {
-            console.log("✅ Connected:", newSocket.id);
-            set({ socket: newSocket });
-        });
-    
-        newSocket.on("getOnlineUsers", (userIds) => {
-            if (Array.isArray(userIds)) { 
-                set({ onlineUsers: userIds });
-                console.log("🟢 Online Users:", userIds);
+        
+        if (!authUser?._id) {
+          console.log("Waiting for authenticated user...");
+          // Retry after a short delay if authUser might be coming
+          setTimeout(() => {
+            if (get().authUser?._id) {
+              get().connectSocket();
             }
+          }, 500);
+          return null;
+        }
+        
+        const SOCKET_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
+        
+        const newSocket = io(SOCKET_URL, {
+          query: { userId: authUser._id },
+          withCredentials: true,
+          transports: ["websocket", "polling"],
+          reconnection: true,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 1000,
         });
-    
+        
+        newSocket.on("connect", () => {
+          console.log("✅ Connected:", newSocket.id);
+          set({ socket: newSocket });
+          set((state) => {
+            if (!state.onlineUsers.includes(authUser._id)) {
+              return { onlineUsers: [...state.onlineUsers, authUser._id] };
+            }
+            return {};
+          });
+        });
+      
+        newSocket.on("getOnlineUsers", (userIds) => {
+          if (Array.isArray(userIds)) {
+            set({ onlineUsers: userIds });
+            console.log("🟢 Online Users:", userIds);
+          }
+        });
+      
         newSocket.on("disconnect", () => {
-            console.log("❌ Disconnected from WebSocket");
-            set({ socket: null, onlineUsers: [] });
+          console.log("❌ Disconnected from WebSocket");
+          set({ socket: null, onlineUsers: [] });
         });
-
+      
+        // Improved error handling
+        newSocket.on("connect_error", (error) => {
+          console.error("🔴 Socket Connection Error:", error);
+          set({ socket: null });
+        });
+      
         return newSocket;
-    },
+      },
 
     disconnectSocket: () => {
         const { socket } = get();
