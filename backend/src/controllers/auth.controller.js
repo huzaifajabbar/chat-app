@@ -96,13 +96,18 @@ export const updateProfile = async (req, res) => {
             return res.status(400).json({message: "Profile picture is required"});
         }
 
-       const picUploadResponse = await cloudinary.uploader.upload(profilePic);
-
-       const updatedUser = await User.findByIdAndUpdate(userID, {profilePic: picUploadResponse.secure_url}, {new: true});
-
-       res.status(200).json(updatedUser);
+        try {
+           const picUploadResponse = await cloudinary.uploader.upload(profilePic);
+           console.log("Cloudinary upload successful:", picUploadResponse.secure_url);
+           
+           const updatedUser = await User.findByIdAndUpdate(userID, {profilePic: picUploadResponse.secure_url}, {new: true});
+           res.status(200).json(updatedUser);
+        } catch (cloudinaryError) {
+           console.error("Cloudinary upload error:", cloudinaryError);
+           return res.status(500).json({message: "Failed to upload image to cloud storage"});
+        }
     } catch (error) {
-        console.log("Error in update profile", error);
+        console.error("Error in update profile", error);
         return res.status(500).json({message: "Internal server error"});  
     }
 }

@@ -1,7 +1,7 @@
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { useNavigate, Link } from "react-router-dom"; // Changed to Link component
-import { MessageSquare, User, Lock, Eye, EyeOff, Upload } from "lucide-react"; // Added Upload icon
+import { useNavigate, Link } from "react-router-dom";
+import { MessageSquare, User, Lock, Eye, EyeOff, Upload } from "lucide-react";
 import toast from "react-hot-toast";
 
 const LoginPage = () => {
@@ -37,16 +37,13 @@ const LoginPage = () => {
     try {
       const success = await login(formData);
       if (success) {
-        toast.success("Welcome back!");
         navigate("/");
       }
-    } catch (error) {
-      // Error already handled by store, but we can add additional handling here
-    }
+    } catch (error) {}
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-gray-900 text-white">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-base-200 text-base-content">
       {/* Left Side */}
       <div className="flex flex-col justify-center items-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8">
@@ -56,23 +53,18 @@ const LoginPage = () => {
                 <MessageSquare className="size-6 text-primary" />
               </div>
               <h1 className="text-2xl font-bold mt-2">Login</h1>
-              <p className="text-gray-400">Welcome back to your account</p> {/* Updated text */}
+              <p className="text-gray-500">Welcome back to your account</p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Username Input */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium text-gray-200">Username</span>
-              </label>
+              <label className="label">Username</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="size-5 z-10 text-gray-500" />
-                </div>
+                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 z-10" />
                 <input
                   type="text"
-                  className="input input-bordered w-full pl-10 bg-gray-800 text-white border-gray-700"
+                  className="input input-bordered w-full pl-12"
                   placeholder="johndoe"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
@@ -80,25 +72,20 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Password Input */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium text-gray-200">Password</span>
-              </label>
+              <label className="label">Password</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="size-5 z-10 text-gray-500" />
-                </div>
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 z-10" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="input input-bordered w-full pl-10 pr-10 bg-gray-800 text-white border-gray-700"
+                  className="input input-bordered w-full pl-12 pr-10"
                   placeholder="Enter password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-400"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
@@ -106,84 +93,46 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button type="submit" className="btn btn-primary w-full" disabled={isLoggingIn}>
               {isLoggingIn ? "Logging in..." : "Login"}
             </button>
 
-            {/* Sign-up Link */}
-            <div className="text-center mt-4">
-              <p className="text-gray-400">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-primary hover:underline">Sign up</Link>
-              </p>
-            </div>
+            <p className="text-center text-gray-500">
+              Don't have an account? <Link to="/signup" className="text-primary hover:underline">Sign up</Link>
+            </p>
           </form>
         </div>
       </div>
 
       {/* Right Side */}
-      <div className="hidden lg:flex bg-primary text-primary-content">
-        <div className="flex flex-col justify-center p-12 w-full">
-          <div className="max-w-lg mx-auto space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold">Connect with us</h2>
-              <p className="text-lg opacity-90">
-                Join our community of millions and start sharing your ideas today.
-              </p>
-            </div>
+      <div className="hidden lg:flex w-full bg-gradient-to-r from-base-300 to-base-100 text-base-content p-12 items-center">
+        <div className="max-w-lg mx-auto space-y-8">
+          <h2 className="text-3xl font-bold">Join the Community</h2>
+          <p className="text-lg opacity-90">
+            Connect, share, and communicate in real-time with people across the globe.
+          </p>
 
-            {/* Feature list */}
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="size-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <MessageSquare className="size-5" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-lg">Real-time messaging</h3>
-                  <p className="opacity-80">Connect with friends and colleagues instantly</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="size-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <Upload className="size-5" /> {/* Changed to Upload icon */}
-                </div>
-                <div>
-                  <h3 className="font-medium text-lg">File sharing</h3>
-                  <p className="opacity-80">Share documents, photos, and more with ease</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="size-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <Lock className="size-5" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-lg">End-to-end encryption</h3>
-                  <p className="opacity-80">Your conversations are secure and private</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial */}
-            <div className="bg-white/5 p-6 rounded-xl">
-              <p className="italic opacity-90 mb-4">
-                "This platform has completely transformed how our team communicates. The interface is intuitive and the features are exactly what we needed."
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="size-10 rounded-full bg-white/20"></div>
-                <div>
-                  <p className="font-medium">Sarah Johnson</p>
-                  <p className="opacity-70 text-sm">Product Manager, TechCorp</p>
-                </div>
-              </div>
-            </div>
+          <div className="space-y-6">
+            <Feature icon={MessageSquare} title="Real-time messaging" text="Instantly connect with friends and colleagues." />
+            <Feature icon={Upload} title="File sharing" text="Share documents, photos, and videos seamlessly." />
+            <Feature icon={Lock} title="Secure conversations" text="End-to-end encryption keeps your chats private." />
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const Feature = ({ icon: Icon, title, text }) => (
+  <div className="flex items-start gap-4">
+    <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center">
+      <Icon className="size-6 text-primary" />
+    </div>
+    <div>
+      <h3 className="font-medium text-lg">{title}</h3>
+      <p className="opacity-80">{text}</p>
+    </div>
+  </div>
+);
 
 export default LoginPage;

@@ -5,21 +5,27 @@ import LoginPage from "./pages/LoginPage.jsx"
 import SignUpPage from "./pages/SignUpPage.jsx"
 import SettingsPage from "./pages/SettingsPage.jsx"
 import ProfilePage from "./pages/ProfilePage.jsx"
+import LandingPage from "./pages/LandingPage.jsx"
 import { useAuthStore } from "./store/useAuthStore.js"
 import { useEffect } from "react"
 import { Navigate } from "react-router-dom";
 import {Loader} from "lucide-react"
 import { Toaster } from 'react-hot-toast';
+import { useThemeStore } from "./store/useThemeStore.js"
 
 
 function App() { 
   const {authUser, checkAuth, isCheckingAuth} = useAuthStore();
+  const {theme} = useThemeStore();
 
   useEffect(()=> {
     checkAuth();
   }, [checkAuth])
 
-  console.log({authUser})
+  useEffect(() => {
+    // Set initial theme from storage
+    document.documentElement.setAttribute("data-theme", theme);
+  }, []);
 
   if(isCheckingAuth && !authUser) {
     return(
@@ -31,17 +37,18 @@ function App() {
   
   return (
     < >
-    <div>
-      <Navbar></Navbar>
-      <Routes>
-        <Route path="/" element={authUser ? <HomePage></HomePage> : <Navigate to="/login"></Navigate>}></Route>
-        <Route path="/signup" element={!authUser ? <SignUpPage></SignUpPage> : <Navigate to="/"></Navigate>}></Route>
-        <Route path="/login" element={!authUser? <LoginPage></LoginPage> : <Navigate to="/"></Navigate>}></Route>
-        <Route path="/settings" element={<SettingsPage></SettingsPage>}></Route>
-        <Route path="/profile" element={authUser ? <ProfilePage></ProfilePage> : <Navigate to="/login"></Navigate>}></Route>
-      </Routes>
-
-      <Toaster></Toaster>
+ <div className="h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={authUser ? <HomePage /> : <LandingPage/>} />
+          <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        </Routes>
+      </main>
+      <Toaster />
     </div>
     </>
   )
