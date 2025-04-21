@@ -39,14 +39,13 @@ const SignUpPage = () => {
     try {
       await signUp(formData);
       toast.success("Account created successfully!");
-  
-      // Log in automatically after signup
+
       const success = await login({ username: formData.username, password: formData.password });
   
       if (success) {
         navigate("/");
       } else {
-        navigate("/login"); // Fallback if login fails
+        navigate("/login");
       }
     } catch (error) {
       toast.error(error.message || "Failed to create account.");
@@ -57,7 +56,6 @@ const SignUpPage = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-base-200 text-base-content overflow-hidden">
-      {/* Left Side (Form Section) */}
       <div className="flex flex-col mb-8 justify-center items-center w-full lg:w-1/2 p-6 sm:p-12 pb-16 lg:pb-0">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center mb-6">
@@ -134,7 +132,6 @@ const SignUpPage = () => {
         </div>
       </div>
 
-      {/* Right Side (New Stylish Design) */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-r from-base-300 to-base-100 text-base-content p-12 items-center">
         <div className="max-w-lg mx-auto space-y-8">
           <h2 className="text-3xl font-bold">Join the Community</h2>
@@ -153,7 +150,6 @@ const SignUpPage = () => {
   );
 };
 
-// Reusable Input Component
 const InputField = ({ label, type, icon: Icon, placeholder, value, onChange }) => (
   <div className="form-control">
     <label className="label">{label}</label>
@@ -170,7 +166,6 @@ const InputField = ({ label, type, icon: Icon, placeholder, value, onChange }) =
   </div>
 );
 
-// Feature Component
 const Feature = ({ icon: Icon, title, text }) => (
   <div className="flex items-start gap-4">
     <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center">

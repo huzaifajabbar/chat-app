@@ -104,7 +104,6 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* Right Side */}
       <div className="hidden lg:flex w-full bg-gradient-to-r from-base-300 to-base-100 text-base-content p-12 items-center">
         <div className="max-w-lg mx-auto space-y-8">
           <h2 className="text-3xl font-bold">Join the Community</h2>

@@ -10,17 +10,17 @@ import { Link } from 'react-router-dom';
 const LandingPage = () => {
   const features = [
     {
-      icon: <MessageCircle className="w-12 h-12 text-primary" />, // Stands out and fits brand theme
+      icon: <MessageCircle className="w-12 h-12 text-primary" />,
       title: "Instant Messaging",
       description: "Connect with friends and colleagues in real-time"
     },
     {
-      icon: <Users className="w-12 h-12 text-secondary" />, // Slight contrast with primary
+      icon: <Users className="w-12 h-12 text-secondary" />,
       title: "Seamless Connections",
       description: "Build and maintain relationships effortlessly"
     },
     {
-      icon: <Shield className="w-12 h-12 text-accent" />, // Highlights security as important
+      icon: <Shield className="w-12 h-12 text-accent" />,
       title: "Secure Communication",
       description: "Your privacy and security are our top priorities"
     }
@@ -30,7 +30,6 @@ const LandingPage = () => {
     <div className="min-h-screen bg-base-100 flex flex-col relative overflow-hidden">
       <div className="container mx-auto px-4 py-16 flex-1 flex flex-col justify-center">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Left Side - Hero Content */}
           <div className="space-y-6 text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-bold text-base-content transform transition-all duration-500 hover:scale-105">
               Connect, Chat, <br /> Communicate Freely
@@ -58,7 +57,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Right Side - Features */}
           <div className="grid md:grid-cols-1 gap-6">
             {features.map((feature, index) => (
               <div 
@@ -95,7 +93,6 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-10 -z-10">
         <div className="absolute bg-primary rounded-full -top-20 -right-20 w-96 h-96 blur-3xl" />
         <div className="absolute bg-secondary rounded-full -bottom-20 -left-20 w-96 h-96 blur-3xl" />

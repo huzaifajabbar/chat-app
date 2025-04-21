@@ -16,7 +16,6 @@ const Navbar = () => {
           Miracle
         </Link>
 
-        {/* Desktop Navigation */}
         <ul className="hidden lg:flex items-center space-x-6">
           <li>
             <Link to="/" className="btn btn-ghost flex items-center gap-2">
@@ -53,12 +52,10 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* Mobile Menu Button */}
         <button className="lg:hidden btn btn-ghost" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
 
-        {/* Mobile Dropdown Menu (Overlapping, not expanding) */}
         {isOpen && (
           <div className="absolute right-4 top-16 bg-base-300 shadow-xl rounded-lg p-4 w-48 z-50 animate-fade-in">
             <ul className="space-y-3">

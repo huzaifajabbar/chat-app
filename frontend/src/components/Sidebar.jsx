@@ -16,7 +16,7 @@ const Sidebar = ({ onClose, isMobile }) => {
 
   return (
     <aside className="h-full w-full border-r border-base-300 flex flex-col relative">
-      {/* Close button for mobile */}
+
       {isMobile && (
         <button 
           className="

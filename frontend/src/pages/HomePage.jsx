@@ -11,7 +11,6 @@ const HomePage = () => {
 
   return (
     <div className="h-full w-full flex bg-base-200 overflow-hidden">
-      {/* Sidebar - Mobile and Desktop Responsive */}
       <div 
         className={`
           fixed inset-y-0 left-0 z-40 
@@ -35,7 +34,6 @@ const HomePage = () => {
         />
       </div>
 
-      {/* Mobile Sidebar Toggle Button */}
       <button 
         className={`
           md:hidden 
@@ -55,7 +53,6 @@ const HomePage = () => {
         <Contact size={24} />
       </button>
 
-      {/* Chat section */}
       <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
         <div className="bg-base-100 rounded-lg shadow-cl w-full h-full relative overflow-hidden">
           <div className="flex h-full rounded-lg overflow-hidden">
@@ -64,7 +61,6 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Overlay for mobile sidebar */}
       {isSidebarOpen && (
         <div 
           className="

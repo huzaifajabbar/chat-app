@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
+import toast from "react-hot-toast";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
@@ -11,7 +12,7 @@ const ProfilePage = () => {
       const file = e.target.files[0];
       if (!file) return;
       
-      // Check file size (limit to 5MB for example)
+
       if (file.size > 5 * 1024 * 1024) {
         toast.error("Image size should be less than 5MB");
         return;
@@ -50,7 +51,6 @@ const ProfilePage = () => {
             <p className="mt-2">Your profile information</p>
           </div>
 
-          {/* avatar upload section */}
 
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
